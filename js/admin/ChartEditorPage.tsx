@@ -112,7 +112,7 @@ export default class ChartEditorPage extends React.Component<{ chartId?: number,
     render() {
         return <AdminLayout noSidebar>
             <main className="ChartEditorPage">
-                {(this.editor === undefined || this.editor.currentRequest) && <LoadingBlocker/>}
+                {this.editor === undefined && <LoadingBlocker/>}
                 {this.editor !== undefined && this.renderReady(this.editor)}
             </main>
         </AdminLayout>

@@ -52,7 +52,6 @@ export interface ChartEditorProps {
 export default class ChartEditor {
     props: ChartEditorProps
     // Whether the current chart state is saved or not
-    @observable.ref currentRequest: Promise<any> | undefined
     @observable.ref tab: EditorTab = 'basic'
     @observable.ref errorMessage?: { title: string, content: string }
     @observable.ref previewMode: 'mobile'|'desktop'
