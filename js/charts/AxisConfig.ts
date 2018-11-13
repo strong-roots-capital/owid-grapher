@@ -9,7 +9,6 @@ export class AxisConfigProps {
     @observable.ref max?: number = undefined
     @observable.ref scaleType: ScaleType = 'linear'
     @observable.ref canChangeScaleType?: true = undefined
-    @observable.ref labelDistance?: number // DEPRECATED - remove when nvd3 is gone
 }
 
 // Interface used to access configuration by charts
