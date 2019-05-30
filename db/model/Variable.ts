@@ -1,4 +1,4 @@
-import extend from 'lodash-es/extend'
+import extend = require('lodash/extend')
 
 import * as db from 'db/db'
 import { VariableDisplaySettings } from "charts/VariableData"

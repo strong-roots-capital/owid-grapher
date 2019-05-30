@@ -3,7 +3,7 @@ import * as db from 'db/db'
 import { Post } from 'db/model/Post'
 import { decodeHTML } from 'entities'
 import { Tag } from 'db/model/Tag'
-import uniq from 'lodash-es/uniq'
+import uniq = require('lodash/uniq')
 
 async function main() {
     try {

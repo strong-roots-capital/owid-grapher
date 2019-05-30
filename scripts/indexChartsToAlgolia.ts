@@ -1,5 +1,5 @@
 import * as algoliasearch from 'algoliasearch'
-import keyBy from 'lodash-es/keyBy'
+import keyBy = require('lodash/keyBy')
 
 import * as db from 'db/db'
 import { ALGOLIA_ID } from 'settings'

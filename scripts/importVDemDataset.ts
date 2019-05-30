@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx'
-import keyBy from 'lodash-es/keyBy'
+import keyBy = require('lodash/keyBy')
 import * as fs from 'fs-extra'
 
 import { parseCSV, CSVStreamParser } from 'utils/csv'

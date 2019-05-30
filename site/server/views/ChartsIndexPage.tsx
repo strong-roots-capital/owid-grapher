@@ -4,9 +4,9 @@ import { Head } from './Head'
 import { SiteHeader } from './SiteHeader'
 import { SiteFooter } from './SiteFooter'
 
-import sortBy from 'lodash-es/sortBy'
-import uniqBy from 'lodash-es/uniqBy'
-import flatten from 'lodash-es/flatten'
+import sortBy = require('lodash/sortBy')
+import uniqBy = require('lodash/uniqBy')
+import flatten = require('lodash/flatten')
 
 export interface ChartIndexItem {
     id: number

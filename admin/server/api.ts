@@ -5,11 +5,11 @@ import * as path from 'path'
 import {getConnection} from 'typeorm'
 import * as bodyParser from 'body-parser'
 
-import groupBy from 'lodash-es/groupBy'
-import omit from 'lodash-es/omit'
-import difference from 'lodash-es/difference'
-import keys from 'lodash-es/keys'
-import uniq from 'lodash-es/uniq'
+import groupBy = require('lodash/groupBy')
+import omit = require('lodash/omit')
+import difference = require('lodash/difference')
+import keys = require('lodash/keys')
+import uniq = require('lodash/uniq')
 
 import * as db from 'db/db'
 import * as wpdb from 'db/wpdb'

@@ -4,8 +4,8 @@ import { Tag } from './Tag'
 import { QueryBuilder } from 'knex'
 import {decodeHTML} from 'entities'
 
-import keyBy from 'lodash-es/keyBy'
-import uniq from 'lodash-es/uniq'
+import keyBy = require('lodash/keyBy')
+import uniq = require('lodash/uniq')
 
 export namespace Post {
     export interface Row {

@@ -4,8 +4,8 @@ import * as glob from 'glob'
 import * as shell from 'shelljs'
 import * as cheerio from 'cheerio'
 
-import without from 'lodash-es/without'
-import uniq from 'lodash-es/uniq'
+import without = require('lodash/without')
+import uniq = require('lodash/uniq')
 
 import * as wpdb from 'db/wpdb'
 import * as db from 'db/db'

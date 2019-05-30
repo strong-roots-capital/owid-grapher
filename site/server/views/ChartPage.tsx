@@ -2,7 +2,7 @@ import {BAKED_GRAPHER_URL} from 'settings'
 
 import * as React from 'react'
 import * as urljoin from 'url-join'
-import uniq from 'lodash-es/uniq'
+import uniq = require('lodash/uniq')
 
 import { webpack } from 'utils/server/staticGen'
 import { ChartConfigProps } from 'charts/ChartConfig'

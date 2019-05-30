@@ -3,8 +3,8 @@ import * as parseUrl from 'url-parse'
 import * as path from 'path'
 import * as md5 from 'md5'
 
-import last from 'lodash-es/last'
-import keyBy from 'lodash-es/keyBy'
+import last = require('lodash/last')
+import keyBy = require('lodash/keyBy')
 
 import { BAKED_BASE_URL } from 'settings'
 import {BAKED_SITE_DIR} from 'serverSettings'

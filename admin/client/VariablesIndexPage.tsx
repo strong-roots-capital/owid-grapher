@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction, reaction, IReactionDisposer} from 'mobx'
-import debounce from 'lodash-es/debounce'
+import debounce = require('lodash/debounce')
 
 import { AdminLayout } from './AdminLayout'
 import {SearchField, FieldsRow } from './Forms'

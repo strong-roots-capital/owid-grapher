@@ -1,5 +1,5 @@
 
-import flatten from 'lodash-es/flatten'
+import flatten = require('lodash/flatten')
 
 const chunk = require('chunk-text')
 

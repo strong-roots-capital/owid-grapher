@@ -6,8 +6,8 @@ import { User } from './User'
 import { ChartRevision } from './ChartRevision'
 import { PUBLIC_TAG_PARENT_IDS } from "settings"
 
-import keyBy from 'lodash-es/keyBy'
-import uniq from 'lodash-es/uniq'
+import keyBy = require('lodash/keyBy')
+import uniq = require('lodash/uniq')
 
 @Entity("charts")
 export class Chart extends BaseEntity {

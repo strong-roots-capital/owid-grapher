@@ -2,7 +2,7 @@
 
 import * as path from 'path'
 import * as db from 'db/db'
-import chunk from 'lodash-es/chunk'
+import chunk = require('lodash/chunk')
 import { DB_NAME } from 'serverSettings'
 
 import { exec } from 'utils/server/serverUtil'

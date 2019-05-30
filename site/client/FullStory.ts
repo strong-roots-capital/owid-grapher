@@ -1,4 +1,4 @@
-import mapKeys from 'lodash-es/mapKeys'
+import mapKeys = require('lodash/mapKeys')
 
 declare var window: any
 

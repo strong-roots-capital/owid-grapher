@@ -2,7 +2,7 @@ import * as React from 'react'
 import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 const timeago = require('timeago.js')()
-import identity from 'lodash-es/identity'
+import identity = require('lodash/identity')
 import {bind} from 'decko'
 
 import { Link } from './Link'

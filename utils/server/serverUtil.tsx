@@ -5,10 +5,10 @@ import * as settings from 'settings'
 import * as util from 'util'
 import * as shell from 'shelljs'
 
-import isString from 'lodash-es/isString'
-import toString from 'lodash-es/toString'
-import includes from 'lodash-es/includes'
-import trim from 'lodash-es/trim'
+import isString = require('lodash/isString')
+import toString = require('lodash/toString')
+import includes = require('lodash/includes')
+import trim = require('lodash/trim')
 
 export const promisifiedExec = util.promisify(shell.exec)
 

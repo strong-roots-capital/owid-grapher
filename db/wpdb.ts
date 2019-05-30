@@ -6,7 +6,7 @@ import * as Knex from 'knex'
 
 import * as path from 'path'
 import * as glob from 'glob'
-import sortBy from 'lodash-es/sortBy'
+import sortBy = require('lodash/sortBy')
 import { Post } from 'db/model/Post'
 
 import { promisify } from 'util'

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import keyBy from 'lodash-es/keyBy'
+import keyBy = require('lodash/keyBy')
 import { groupBy, each, isString, sortBy } from 'charts/Util'
 import { computed, action, observable, autorun, runInAction, IReactionDisposer } from 'mobx'
 import { observer } from 'mobx-react'

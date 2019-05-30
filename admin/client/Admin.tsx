@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import isEmpty from 'lodash-es/isEmpty'
+import isEmpty = require('lodash/isEmpty')
 import {observable, computed} from 'mobx'
 import * as urljoin from 'url-join'
 

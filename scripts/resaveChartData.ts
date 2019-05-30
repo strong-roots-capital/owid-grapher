@@ -1,7 +1,7 @@
 import db = require('db/db')
 import { Chart } from 'db/model/Chart'
 import { ChartConfig } from 'charts/ChartConfig'
-import uniq from 'lodash-es/uniq'
+import uniq = require('lodash/uniq')
 import { getVariableData } from 'db/model/Variable'
 
 async function main() {

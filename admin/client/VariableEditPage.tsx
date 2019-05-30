@@ -3,8 +3,8 @@ import {observer} from 'mobx-react'
 import {observable, computed, runInAction, autorun, IReactionDisposer} from 'mobx'
 import {Prompt, Redirect} from 'react-router-dom'
 
-import clone from 'lodash-es/clone'
-import extend from 'lodash-es/extend'
+import clone = require('lodash/clone')
+import extend = require('lodash/extend')
 
 import { AdminLayout } from './AdminLayout'
 import { Link } from './Link'

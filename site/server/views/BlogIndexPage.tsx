@@ -1,5 +1,5 @@
 import * as React from 'react'
-import range from 'lodash-es/range'
+import range = require('lodash/range')
 
 import * as settings from 'settings'
 import { Head } from './Head'

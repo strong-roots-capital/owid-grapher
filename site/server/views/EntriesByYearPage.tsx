@@ -6,7 +6,7 @@ import { BAKED_BASE_URL } from "settings"
 import { SiteHeader } from "./SiteHeader"
 import { SiteFooter } from "./SiteFooter"
 import moment = require("moment")
-import groupBy from 'lodash-es/groupBy'
+import groupBy = require('lodash/groupBy')
 
 type Entry = Pick<Post.Row, 'title'|'slug'|'published_at'>
 

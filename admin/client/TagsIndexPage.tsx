@@ -3,7 +3,7 @@ import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction} from 'mobx'
 import { Redirect } from 'react-router-dom'
 
-import keyBy from 'lodash-es/keyBy'
+import keyBy = require('lodash/keyBy')
 
 interface Dictionary<T> {
     [index: string]: T

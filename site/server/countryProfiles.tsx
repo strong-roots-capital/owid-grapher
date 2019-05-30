@@ -9,10 +9,10 @@ import { Variable } from 'db/model/Variable'
 import { SiteBaker } from './SiteBaker'
 import { countries } from 'utils/countries'
 
-import keyBy from 'lodash-es/keyBy'
-import uniqBy from 'lodash-es/uniqBy'
-import groupBy from 'lodash-es/groupBy'
-import sortBy from 'lodash-es/sortBy'
+import keyBy = require('lodash/keyBy')
+import uniqBy = require('lodash/uniqBy')
+import groupBy = require('lodash/groupBy')
+import sortBy = require('lodash/sortBy')
 
 export async function countriesIndexPage() {
     return renderToHtmlPage(<CountriesIndexPage countries={countries}/>)

@@ -3,7 +3,7 @@ import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction} from 'mobx'
 const timeago = require('timeago.js')()
 const fuzzysort = require("fuzzysort")
-import uniq from 'lodash-es/uniq'
+import uniq = require('lodash/uniq')
 
 import { AdminLayout } from './AdminLayout'
 import { SearchField, FieldsRow, EditableTags } from './Forms'

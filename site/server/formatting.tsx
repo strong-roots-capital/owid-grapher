@@ -10,8 +10,8 @@ import Tablepress from './views/Tablepress'
 import {GrapherExports} from './grapherUtil'
 import * as path from 'path'
 
-import capitalize from 'lodash-es/capitalize'
-import last from 'lodash-es/last'
+import capitalize = require('lodash/capitalize')
+import last = require('lodash/last')
 
 const mjAPI = require("mathjax-node")
 

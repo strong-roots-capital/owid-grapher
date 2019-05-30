@@ -1,5 +1,5 @@
 import * as React from 'react'
-import pick from 'lodash-es/pick'
+import pick = require('lodash/pick')
 
 import { webpack } from './webpack'
 import * as settings from 'settings'

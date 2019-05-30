@@ -4,8 +4,8 @@ import { getVariableData } from 'db/model/Variable'
 import * as fs from 'fs-extra'
 const md5 = require('md5')
 
-import last from 'lodash-es/last'
-import uniq from 'lodash-es/uniq'
+import last = require('lodash/last')
+import uniq = require('lodash/uniq')
 
 declare var global: any
 global.window = { location: { search: "" }}

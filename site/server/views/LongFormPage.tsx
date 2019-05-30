@@ -8,9 +8,9 @@ import { formatAuthors, FormattedPost, FormattingOptions } from '../formatting'
 import { CategoryWithEntries } from 'db/wpdb'
 import { SiteSubnavigation } from './SiteSubnavigation'
 
-import flatten from 'lodash-es/flatten'
-import values from 'lodash-es/values'
-import includes from 'lodash-es/includes'
+import flatten = require('lodash/flatten')
+import values = require('lodash/values')
+import includes = require('lodash/includes')
 
 export const LongFormPage = (props: { entries: CategoryWithEntries[], post: FormattedPost, formattingOptions: FormattingOptions }) => {
     const {entries, post, formattingOptions} = props

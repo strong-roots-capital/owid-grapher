@@ -1,5 +1,5 @@
 const fuzzysort = require("fuzzysort")
-import keyBy from 'lodash-es/keyBy'
+import keyBy = require('lodash/keyBy')
 import {observable, computed, action, autorun} from 'mobx'
 import { Analytics } from './Analytics'
 interface ChartItem {

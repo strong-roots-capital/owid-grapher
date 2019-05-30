@@ -25,8 +25,8 @@ import { EntriesByYearPage, EntriesForYearPage } from "./views/EntriesByYearPage
 import { VariableCountryPage } from "./views/VariableCountryPage"
 import { FeedbackPage } from "./views/FeedbackPage"
 
-import keyBy from 'lodash-es/keyBy'
-import sortBy from 'lodash-es/sortBy'
+import keyBy = require('lodash/keyBy')
+import sortBy = require('lodash/sortBy')
 
 
 // Wrap ReactDOMServer to stick the doctype on

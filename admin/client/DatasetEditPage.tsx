@@ -5,13 +5,13 @@ import {Prompt, Redirect} from 'react-router-dom'
 import * as filenamify from 'filenamify'
 const timeago = require('timeago.js')()
 
-import isEmpty from 'lodash-es/isEmpty'
-import clone from 'lodash-es/clone'
-import includes from 'lodash-es/includes'
-import sample from 'lodash-es/sample'
-import sampleSize from 'lodash-es/sampleSize'
-import groupBy from 'lodash-es/groupBy'
-import extend from 'lodash-es/extend'
+import isEmpty = require('lodash/isEmpty')
+import clone = require('lodash/clone')
+import includes = require('lodash/includes')
+import sample = require('lodash/sample')
+import sampleSize = require('lodash/sampleSize')
+import groupBy = require('lodash/groupBy')
+import extend = require('lodash/extend')
 
 import { VariableDisplaySettings } from 'charts/VariableData'
 

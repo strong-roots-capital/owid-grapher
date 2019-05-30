@@ -9,9 +9,9 @@ import { bind } from 'decko'
 import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
 
-import range from 'lodash-es/range'
-import clone from 'lodash-es/clone'
-import uniqBy from 'lodash-es/uniqBy'
+import range = require('lodash/range')
+import clone = require('lodash/clone')
+import uniqBy = require('lodash/uniqBy')
 
 import { extend, pick, capitalize } from 'charts/Util'
 import { Colorpicker } from './Colorpicker'
