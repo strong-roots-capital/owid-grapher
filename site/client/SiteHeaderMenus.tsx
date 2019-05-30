@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { HeaderSearch } from './HeaderSearch'
 import { CategoryWithEntries } from 'db/wpdb'
 import classnames from 'classnames'
-import { find } from 'lodash'
+import find from 'lodash-es/find'
 import { bind } from 'decko'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

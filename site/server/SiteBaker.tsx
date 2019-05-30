@@ -1,10 +1,11 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as glob from 'glob'
-import {without, chunk} from 'lodash'
 import * as shell from 'shelljs'
-import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
+
+import without from 'lodash-es/without'
+import uniq from 'lodash-es/uniq'
 
 import * as wpdb from 'db/wpdb'
 import * as db from 'db/db'
@@ -25,8 +26,8 @@ import { getVariableData } from 'db/model/Variable'
 import { ChartPage } from './views/ChartPage'
 import { bakeImageExports } from './svgPngExport'
 import { Post } from 'db/model/Post'
-import { bakeCountries } from './countryProfiles';
-import { chartPage } from './chartBaking';
+import { bakeCountries } from './countryProfiles'
+import { chartPage } from './chartBaking'
 
 // Static site generator using Wordpress
 
@@ -114,7 +115,7 @@ export class SiteBaker {
             const $ = cheerio.load(row.post_content)
             grapherUrls.push(...$("iframe").toArray().filter(el => (el.attribs['src']||'').match(/\/grapher\//)).map(el => el.attribs['src']))
         }
-        grapherUrls = _.uniq(grapherUrls)
+        grapherUrls = uniq(grapherUrls)
 
         await bakeGrapherUrls(grapherUrls)
 
@@ -255,7 +256,7 @@ export class SiteBaker {
                 console.error(err)
         }
 
-        const variableIds = _.uniq(chart.dimensions.map(d => d.variableId))
+        const variableIds = uniq(chart.dimensions.map(d => d.variableId))
         if (!variableIds.length) return
 
         // Make sure we bake the variables successfully before outputing the chart html
@@ -340,7 +341,6 @@ export class SiteBaker {
         await fs.writeFile(outPath, content)
         this.stage(outPath)
     }
-
 
     async stageWrite(outPath: string, content: string) {
         await fs.mkdirp(path.dirname(outPath))

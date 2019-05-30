@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as _ from 'lodash'
+import range from 'lodash-es/range'
 
 import * as settings from 'settings'
 import { Head } from './Head'
@@ -17,7 +17,7 @@ interface PostMeta {
 
 export const BlogIndexPage = (props: { posts: PostMeta[], pageNum: number, numPages: number }) => {
     const {posts, pageNum, numPages} = props
-    const pageNums = _.range(1, numPages+1)
+    const pageNums = range(1, numPages+1)
 
     return <html>
         <Head canonicalUrl={`${settings.BAKED_BASE_URL}/blog` + (pageNum > 1 ? `/page/${pageNum}` : "")} pageTitle="Blog"/>

@@ -2,15 +2,14 @@ import {BAKED_GRAPHER_URL} from 'settings'
 
 import * as React from 'react'
 import * as urljoin from 'url-join'
-import * as _ from 'lodash'
+import uniq from 'lodash-es/uniq'
 
 import { webpack } from 'utils/server/staticGen'
 import { ChartConfigProps } from 'charts/ChartConfig'
-import { SiteHeader } from './SiteHeader';
-import { SiteFooter } from './SiteFooter';
-import { Head } from './Head';
-import { urlToSlug } from 'charts/Util';
-import { Post } from 'db/model/Post';
+import { SiteHeader } from './SiteHeader'
+import { SiteFooter } from './SiteFooter'
+import { Head } from './Head'
+import { Post } from 'db/model/Post'
 
 export const ChartPage = (props: { chart: ChartConfigProps, post?: Post.Row }) => {
     const {chart, post} = props
@@ -41,7 +40,7 @@ export const ChartPage = (props: { chart: ChartConfigProps, post?: Post.Row }) =
         }
     `
 
-    const variableIds = _.uniq(chart.dimensions.map(d => d.variableId))
+    const variableIds = uniq(chart.dimensions.map(d => d.variableId))
 
     return <html>
         <Head canonicalUrl={canonicalUrl} pageTitle={pageTitle} pageDesc={pageDesc} imageUrl={imageUrl}>

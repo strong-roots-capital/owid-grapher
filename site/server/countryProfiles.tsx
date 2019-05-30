@@ -1,16 +1,18 @@
 import db = require('db/db')
-import { slugify, renderToHtmlPage, JsonError } from 'utils/server/serverUtil';
-import React = require('react');
-import { CountriesIndexPage } from './views/CountriesIndexPage';
-import { ChartConfigProps } from 'charts/ChartConfig';
-import _ = require('lodash');
-import { CountryProfileIndicator, CountryProfilePage } from './views/CountryProfilePage';
-import { DimensionWithData } from 'charts/DimensionWithData';
-import { Variable } from 'db/model/Variable';
-import fs = require('fs-extra')
-import { BAKED_SITE_DIR } from 'serverSettings';
-import { SiteBaker } from './SiteBaker';
+import { renderToHtmlPage, JsonError } from 'utils/server/serverUtil'
+import React = require('react')
+import { CountriesIndexPage } from './views/CountriesIndexPage'
+import { ChartConfigProps } from 'charts/ChartConfig'
+import { CountryProfileIndicator, CountryProfilePage } from './views/CountryProfilePage'
+import { DimensionWithData } from 'charts/DimensionWithData'
+import { Variable } from 'db/model/Variable'
+import { SiteBaker } from './SiteBaker'
 import { countries } from 'utils/countries'
+
+import keyBy from 'lodash-es/keyBy'
+import uniqBy from 'lodash-es/uniqBy'
+import groupBy from 'lodash-es/groupBy'
+import sortBy from 'lodash-es/sortBy'
 
 export async function countriesIndexPage() {
     return renderToHtmlPage(<CountriesIndexPage countries={countries}/>)
@@ -32,8 +34,8 @@ function bakeCache<T>(cacheKey: any, retriever: () => T): T {
 // TODO: make this page per variable instead
 async function countryIndicatorCharts(): Promise<ChartConfigProps[]> {
     return bakeCache(countryIndicatorCharts, async () => {
-        const charts = (await db.table("charts").whereRaw('publishedAt is not null and is_indexable is true')).map((c: any) => JSON.parse(c.config)) as ChartConfigProps[]    
-        return charts.filter(c => c.hasChartTab && c.type === "LineChart" && c.dimensions.length === 1)    
+        const charts = (await db.table("charts").whereRaw('publishedAt is not null and is_indexable is true')).map((c: any) => JSON.parse(c.config)) as ChartConfigProps[]
+        return charts.filter(c => c.hasChartTab && c.type === "LineChart" && c.dimensions.length === 1)
     })
 }
 
@@ -47,23 +49,23 @@ async function countryIndicatorVariables(): Promise<Variable.Row[]> {
 export async function denormalizeLatestCountryData(variableIds?: number[]) {
     const entities = await db.table("entities").select("id", "code").whereRaw("validated is true and code is not null") as { id: number, code: string }[]
 
-    const entitiesByCode = _.keyBy(entities, e => e.code)
-    const entitiesById = _.keyBy(entities, e => e.id)
-    const entityIds = countries.map(c => entitiesByCode[c.code].id)    
+    const entitiesByCode = keyBy(entities, e => e.code)
+    const entitiesById = keyBy(entities, e => e.id)
+    const entityIds = countries.map(c => entitiesByCode[c.code].id)
 
     if (!variableIds) {
         variableIds = (await countryIndicatorVariables()).map(v => v.id)
     }
 
-    let dataValuesQuery = db.table("data_values").select("variableId", "entityId", "value", "year")
+    const dataValuesQuery = db.table("data_values").select("variableId", "entityId", "value", "year")
         .whereIn('variableId', variableIds)
         .whereRaw(`entityId in (?)`, [entityIds])
         .andWhere("year", ">", 2010)
         .andWhere("year", "<", 2020)
         .orderBy("year", "DESC")
-        
+
     let dataValues = await dataValuesQuery as { variableId: number, entityId: number, value: string, year: number }[]
-    dataValues = _.uniqBy(dataValues, dv => `${dv.variableId}-${dv.entityId}`)
+    dataValues = uniqBy(dataValues, dv => `${dv.variableId}-${dv.entityId}`)
     const rows = dataValues.map(dv => ({
         variable_id: dv.variableId,
         country_code: entitiesById[dv.entityId].code,
@@ -80,13 +82,12 @@ export async function denormalizeLatestCountryData(variableIds?: number[]) {
     })
 }
 
-
 async function countryIndicatorLatestData(countryCode: string) {
     const dataValuesByEntityId = await bakeCache(countryIndicatorLatestData, async () => {
         const dataValues = await db.table('country_latest_data')
             .select('variable_id AS variableId', 'country_code AS code', 'year', 'value') as { variableId: number, code: string, year: number, value: string }[]
 
-        return _.groupBy(dataValues, dv => dv.code)
+        return groupBy(dataValues, dv => dv.code)
     })
 
     return dataValuesByEntityId[countryCode]
@@ -96,25 +97,25 @@ async function countryIndicatorLatestData(countryCode: string) {
 //     const dataValuesByEntityId = await bakeCache(countryIndicatorLatestData, async () => {
 //         const entities = await db.table("entities").select("id", "code").whereRaw("validated is true and code is not null") as { id: number, code: string }[]
 
-//         const entitiesByCode = _.keyBy(entities, e => e.code)
-//         const entitiesById = _.keyBy(entities, e => e.id)
-//         const entityIds = countries.map(c => entitiesByCode[c.code].id)    
-    
+//         const entitiesByCode = keyBy(entities, e => e.code)
+//         const entitiesById = keyBy(entities, e => e.id)
+//         const entityIds = countries.map(c => entitiesByCode[c.code].id)
+
 //         const variables = await countryIndicatorVariables()
 //         const variableIds = variables.map(v => v.id)
 //         // const dataValues = await db.table("entities")
 //         //     .select("data_values.variableId", "data_values.entityId", "data_values.value", "data_values.year")
 //         //     .join("data_values", "data_values.entityId", "=", "entities.id")
 //         //     .whereIn("entities.code", countryCodes)
-//         //     .orderBy("year", "DESC") as { variableId: number, entityId: number, value: string, year: number }[]  
-            
+//         //     .orderBy("year", "DESC") as { variableId: number, entityId: number, value: string, year: number }[]
+
 //         const dataValues = await db.table("data_values").select("variableId", "entityId", "value", "year")
 //             .whereIn("variableId", variableIds)
 //             .whereRaw(`entityId in (?)`, [entityIds])
 //             .andWhere("year", ">", 2010)
 //             .andWhere("year", "<", 2020)
-//             .orderBy("year", "DESC") as { variableId: number, entityId: number, value: string, year: number }[]    
-//         return _.groupBy(dataValues, dv => entitiesById[dv.entityId].code)
+//             .orderBy("year", "DESC") as { variableId: number, entityId: number, value: string, year: number }[]
+//         return groupBy(dataValues, dv => entitiesById[dv.entityId].code)
 //     })
 
 //     return dataValuesByEntityId[countryCode]
@@ -128,10 +129,10 @@ export async function countryProfilePage(countrySlug: string) {
 
     const charts = await countryIndicatorCharts()
     const variables = await countryIndicatorVariables()
-    const variablesById = _.keyBy(variables, v => v.id)
+    const variablesById = keyBy(variables, v => v.id)
     const dataValues = await countryIndicatorLatestData(country.code)
 
-    const valuesByVariableId = _.groupBy(dataValues, v => v.variableId)
+    const valuesByVariableId = groupBy(dataValues, v => v.variableId)
 
     let indicators: CountryProfileIndicator[] = []
     for (const c of charts) {
@@ -156,8 +157,8 @@ export async function countryProfilePage(countrySlug: string) {
             })
         }
     }
- 
-    indicators = _.sortBy(indicators, i => i.name.trim())
+
+    indicators = sortBy(indicators, i => i.name.trim())
 
     return renderToHtmlPage(<CountryProfilePage indicators={indicators} country={country}/>)
 }

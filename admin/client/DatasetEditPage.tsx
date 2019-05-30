@@ -1,10 +1,17 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
 import { observable, computed, runInAction, autorun, action, IReactionDisposer, when } from 'mobx'
-import * as _ from 'lodash'
 import {Prompt, Redirect} from 'react-router-dom'
 import * as filenamify from 'filenamify'
 const timeago = require('timeago.js')()
+
+import isEmpty from 'lodash-es/isEmpty'
+import clone from 'lodash-es/clone'
+import includes from 'lodash-es/includes'
+import sample from 'lodash-es/sample'
+import sampleSize from 'lodash-es/sampleSize'
+import groupBy from 'lodash-es/groupBy'
+import extend from 'lodash-es/extend'
 
 import { VariableDisplaySettings } from 'charts/VariableData'
 
@@ -34,7 +41,7 @@ class VariableEditable {
     constructor(json: any) {
         for (const key in this) {
             if (key === "display")
-                _.extend(this.display, json.display)
+                extend(this.display, json.display)
             else
                 this[key] = json[key]
         }
@@ -77,29 +84,29 @@ class VariableEditRow extends React.Component<{ variable: VariableEditListItem, 
             dimensions: [{
                 property: 'y',
                 variableId: this.props.variable.id,
-                display: _.clone(this.newVariable.display)
+                display: clone(this.newVariable.display)
             }]
         }
     }
 
     @action.bound chartIsReady(chart: ChartConfig) {
         // XXX refactor this with EditorBasicTab
-        if (_.isEmpty(chart.map.data.choroplethData)) {
+        if (isEmpty(chart.map.data.choroplethData)) {
             chart.props.tab = "chart"
             chart.props.hasMapTab = false
             if (chart.isScatter || chart.isSlopeChart) {
                 chart.data.selectedKeys = []
             } else if (chart.data.primaryDimensions.length > 1) {
-                const entity = _.includes(chart.data.availableEntities, "World") ? "World" : _.sample(chart.data.availableEntities)
+                const entity = includes(chart.data.availableEntities, "World") ? "World" : sample(chart.data.availableEntities)
                 chart.data.selectedKeys = chart.data.availableKeys.filter(key => chart.data.lookupKey(key).entity === entity)
                 chart.props.addCountryMode = 'change-country'
             } else {
                 chart.props.addCountryMode = 'add-country'
                 if (chart.data.filledDimensions[0].yearsUniq.length === 1) {
                     chart.props.type = ChartType.DiscreteBar
-                    chart.data.selectedKeys = chart.data.availableKeys.length > 15 ? _.sampleSize(chart.data.availableKeys, 8) : chart.data.availableKeys
+                    chart.data.selectedKeys = chart.data.availableKeys.length > 15 ? sampleSize(chart.data.availableKeys, 8) : chart.data.availableKeys
                 } else {
-                    chart.data.selectedKeys = chart.data.availableKeys.length > 10 ? _.sampleSize(chart.data.availableKeys, 3) : chart.data.availableKeys
+                    chart.data.selectedKeys = chart.data.availableKeys.length > 10 ? sampleSize(chart.data.availableKeys, 3) : chart.data.availableKeys
                 }
             }
         }
@@ -114,7 +121,7 @@ class VariableEditRow extends React.Component<{ variable: VariableEditListItem, 
 
         this.dispose = autorun(() => {
             const chart = this.chart
-            const display = _.clone(this.newVariable.display)
+            const display = clone(this.newVariable.display)
             if (chart) {
                 runInAction(() => chart.props.dimensions[0].display = display)
             }
@@ -221,7 +228,7 @@ class DatasetEditable {
         for (const key in this) {
             if (key in json) {
                 if (key === "tags")
-                    this.tags = _.clone(json.tags)
+                    this.tags = clone(json.tags)
                 else
                     this[key] = (json as any)[key]
             }
@@ -237,7 +244,7 @@ class DatasetTagEditor extends React.Component<{ newDataset: DatasetEditable, av
 
     render() {
         const {newDataset, availableTags, isBulkImport} = this.props
-        const tagsByParent = _.groupBy(availableTags, c => c.parentName)
+        const tagsByParent = groupBy(availableTags, c => c.parentName)
 
         return <div className="form-group">
             <label>Tags</label>

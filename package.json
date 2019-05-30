@@ -1,6 +1,7 @@
 {
   "private": true,
   "version": "2.0.0",
+  "sideEffects": false,
   "scripts": {
     "tsn": "ts-node -F -r tsconfig-paths/register -r dotenv/config",
     "tsnd": "ts-node-dev -F --transpileOnly --respawn --no-notify -r tsconfig-paths/register -r source-map-support/register -r dotenv/config",
@@ -78,7 +79,7 @@
     "linkifyjs": "^2.1.5",
     "localeval": "^15.2.3",
     "lockfile": "^1.0.3",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.11",
     "lodash-es": "^4.17.4",
     "mathjax-node": "^2.1.1",
     "md5": "^2.2.1",
@@ -179,7 +180,7 @@
     "@types/js-base64": "^2.3.1",
     "@types/js-cookie": "^2.0.28",
     "@types/knex": "^0.15.1",
-    "@types/lodash": "^4.14.74",
+    "@types/lodash": "^4.14.132",
     "@types/lodash-es": "^4.14.6",
     "@types/md5": "^2.1.32",
     "@types/minimatch": "^3.0.3",

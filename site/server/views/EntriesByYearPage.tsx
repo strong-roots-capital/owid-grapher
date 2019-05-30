@@ -6,12 +6,12 @@ import { BAKED_BASE_URL } from "settings"
 import { SiteHeader } from "./SiteHeader"
 import { SiteFooter } from "./SiteFooter"
 import moment = require("moment")
-import _ = require("lodash")
+import groupBy from 'lodash-es/groupBy'
 
 type Entry = Pick<Post.Row, 'title'|'slug'|'published_at'>
 
 export const EntriesByYearPage = (props: { entries: Entry[] }) => {
-    const entriesByYear = _.groupBy(props.entries, e => moment(e.published_at as Date).year())
+    const entriesByYear = groupBy(props.entries, e => moment(e.published_at as Date).year())
 
     const years = Object.keys(entriesByYear).sort().reverse()
 
@@ -29,7 +29,7 @@ export const EntriesByYearPage = (props: { entries: Entry[] }) => {
                         </li>)}
                     </ul>
                 </section>)}
-                
+
             </main>
             <SiteFooter/>
         </body>
@@ -37,7 +37,7 @@ export const EntriesByYearPage = (props: { entries: Entry[] }) => {
 }
 
 export const EntriesForYearPage = (props: { entries: Entry[], year: number }) => {
-    const entriesByYear = _.groupBy(props.entries, e => moment(e.published_at as Date).year())
+    const entriesByYear = groupBy(props.entries, e => moment(e.published_at as Date).year())
 
     const years = Object.keys(entriesByYear).sort().reverse().filter(y => parseInt(y) === props.year)
 

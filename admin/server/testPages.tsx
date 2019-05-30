@@ -11,7 +11,6 @@ import * as db from 'db/db'
 import {ADMIN_BASE_URL, BAKED_GRAPHER_URL, BAKED_BASE_URL} from 'settings'
 import {expectInt} from 'utils/server/serverUtil'
 import * as querystring from 'querystring'
-import * as _ from 'lodash'
 import * as url from 'url'
 
 const IS_LIVE = ADMIN_BASE_URL === "https://owid.cloud"
@@ -166,8 +165,13 @@ testPages.get('/embeds', async (req, res) => {
     const count = await query.getCount()
     const numPages = Math.ceil(count/numPerPage)
 
-    const prevPageUrl = page > 1 ? (url.parse(req.originalUrl).pathname as string) + "?" + querystring.stringify(_.extend({}, req.query, { page: page-1 })) : undefined
-    const nextPageUrl = page < numPages ? (url.parse(req.originalUrl).pathname as string) + "?" + querystring.stringify(_.extend({}, req.query, { page: page+1 })) : undefined
+    const prevPageUrl = page > 1
+        ? ((url.parse(req.originalUrl).pathname as string) + "?" + querystring.stringify({ ...req.query, page: page-1 }))
+        : undefined
+
+    const nextPageUrl = page < numPages
+        ? ((url.parse(req.originalUrl).pathname as string) + "?" + querystring.stringify({ ...req.query, page: page+1 }))
+        : undefined
 
     res.send(renderToHtmlPage(<EmbedTestPage prevPageUrl={prevPageUrl} nextPageUrl={nextPageUrl} charts={charts} currentPage={page} totalPages={numPages} />))
 })

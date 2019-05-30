@@ -1,10 +1,11 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
-import {observable, computed, action, runInAction, autorun, IReactionDisposer} from 'mobx'
-import * as _ from 'lodash'
+import {observable, computed, runInAction, autorun, IReactionDisposer} from 'mobx'
 import {Prompt, Redirect} from 'react-router-dom'
 
-import { Admin } from './Admin'
+import clone from 'lodash-es/clone'
+import extend from 'lodash-es/extend'
+
 import { AdminLayout } from './AdminLayout'
 import { Link } from './Link'
 import {BindString, BindFloat, FieldsRow } from './Forms'
@@ -40,7 +41,7 @@ class VariableEditable {
     constructor(json: any) {
         for (const key in this) {
             if (key === "display")
-                _.extend(this.display, json.display)
+                extend(this.display, json.display)
             else
                 this[key] = json[key]
         }
@@ -150,7 +151,7 @@ class VariableEditor extends React.Component<{ variable: VariablePageData }> {
             dimensions: [{
                 property: 'y',
                 variableId: this.props.variable.id,
-                display: _.clone(this.newVariable.display)
+                display: clone(this.newVariable.display)
             }]
         }
     }

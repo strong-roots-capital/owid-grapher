@@ -1,9 +1,9 @@
 import * as wpdb from 'db/wpdb'
 import * as db from 'db/db'
-import { syncPostsToGrapher, syncPostTagsToGrapher, Post } from 'db/model/Post'
-import { decodeHTML } from 'entities';
-import { Tag } from 'db/model/Tag';
-import _ = require('lodash');
+import { Post } from 'db/model/Post'
+import { decodeHTML } from 'entities'
+import { Tag } from 'db/model/Tag'
+import uniq from 'lodash-es/uniq'
 
 async function main() {
     try {
@@ -11,11 +11,11 @@ async function main() {
 
         const tagsByPostId = await wpdb.getTagsByPostId()
         const postRows = await wpdb.query("select * from wp_posts where (post_type='page' or post_type='post') AND post_status != 'trash'")
-    
+
         for (const post of postRows) {
             const categories = categoriesByPostId.get(post.ID)||[]
 
-            let tagNames = categories.map(t => decodeHTML(t))
+            const tagNames = categories.map(t => decodeHTML(t))
 
             const matchingTags = await Tag.select('id', 'name', 'isBulkImport').from(
                 db.table(Tag.table).whereIn('name', tagNames).andWhere({ isBulkImport: false })
@@ -32,7 +32,6 @@ async function main() {
             //     tagIds.push(1640)
             // }
 
-
             // const matchingTags = await Tag.select('id', 'name', 'isBulkImport').from(
             //     db.knex().from(Tag.table).whereIn('name', tagNames).andWhere({ isBulkImport: false })
             // )
@@ -40,7 +39,7 @@ async function main() {
             // if (matchingTags.map(t => t.name).includes(post.post_title)) {
             //     tagIds.push(1640)
             // }
-            await Post.setTags(post.ID, _.uniq(tagIds))
+            await Post.setTags(post.ID, uniq(tagIds))
         }
     } finally {
         await wpdb.end()

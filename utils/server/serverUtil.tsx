@@ -1,11 +1,14 @@
-import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-import * as _ from 'lodash'
 import {quote} from 'shell-quote'
 import * as urljoin from 'url-join'
 import * as settings from 'settings'
 import * as util from 'util'
 import * as shell from 'shelljs'
+
+import isString from 'lodash-es/isString'
+import toString from 'lodash-es/toString'
+import includes from 'lodash-es/includes'
+import trim from 'lodash-es/trim'
 
 export const promisifiedExec = util.promisify(shell.exec)
 
@@ -59,7 +62,7 @@ export function renderToHtmlPage(element: any): string {
 
 // Determine if input is suitable for use as a url slug
 export function isValidSlug(slug: any) {
-    return _.isString(slug) && slug.length > 1 && slug.match(/^[\w-]+$/)
+    return isString(slug) && slug.length > 1 && slug.match(/^[\w-]+$/)
 }
 
 export function shellEscape(s: string) {
@@ -67,8 +70,8 @@ export function shellEscape(s: string) {
 }
 
 export function csvEscape(value: any): string {
-    const valueStr = _.toString(value)
-    if (_.includes(valueStr, ","))
+    const valueStr = toString(value)
+    if (includes(valueStr, ","))
         return `"${value.replace(/\"/g, "\"\"")}"`
     else
         return value
@@ -85,7 +88,7 @@ export function absoluteUrl(path: string): string {
 // Take an arbitrary string and turn it into a nice url slug
 export function slugify(s: string) {
     s = s.toLowerCase().replace(/\s*\*.+\*/, '').replace(/[^\w- ]+/g, '')
-    return _.trim(s).replace(/ +/g, '-')
+    return trim(s).replace(/ +/g, '-')
 }
 
 import * as filenamify from 'filenamify'

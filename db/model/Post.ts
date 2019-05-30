@@ -1,9 +1,11 @@
 import * as db from 'db/db'
 import * as wpdb from 'db/wpdb'
-import * as _ from 'lodash'
-import { Tag } from './Tag';
+import { Tag } from './Tag'
 import { QueryBuilder } from 'knex'
 import {decodeHTML} from 'entities'
+
+import keyBy from 'lodash-es/keyBy'
+import uniq from 'lodash-es/uniq'
 
 export namespace Post {
     export interface Row {
@@ -16,11 +18,11 @@ export namespace Post {
         published_at: Date|null
         updated_at: Date
     }
-    
+
     export type Field = keyof Row
 
     export const table = "posts"
-    
+
     export function select<K extends keyof Row>(...args: K[]): { from: (query: QueryBuilder) => Promise<Pick<Row, K>[]> } {
         return {
             from: (query) => query.select(...args) as any
@@ -66,10 +68,10 @@ export namespace Post {
 export async function syncPostsToGrapher() {
     const rows = await wpdb.query("SELECT * FROM wp_posts WHERE (post_type='page' OR post_type='post') AND post_status != 'trash'")
 
-    const doesExistInWordpress = _.keyBy(rows, 'ID')
+    const doesExistInWordpress = keyBy(rows, 'ID')
     const existsInGrapher = await Post.select('id').from(db.knex().from(Post.table))
-    const doesExistInGrapher = _.keyBy(existsInGrapher, 'id')
- 
+    const doesExistInGrapher = keyBy(existsInGrapher, 'id')
+
     const categoriesByPostId = await wpdb.getCategoriesByPostId()
 
     const toDelete = existsInGrapher.filter(p => !doesExistInWordpress[p.id]).map(p => p.id)
@@ -82,7 +84,7 @@ export async function syncPostsToGrapher() {
             status: post.post_status,
             content: post.post_content,
             published_at: post.post_date_gmt === "0000-00-00 00:00:00" ? null : post.post_date_gmt,
-            updated_at: post.post_modified_gmt === "0000-00-00 00:00:00" ? "1970-01-01 00:00:00" : post.post_modified_gmt    
+            updated_at: post.post_modified_gmt === "0000-00-00 00:00:00" ? "1970-01-01 00:00:00" : post.post_modified_gmt
         }
     }) as Post.Row[]
 
@@ -101,22 +103,20 @@ export async function syncPostsToGrapher() {
 }
 
 export async function syncPostTagsToGrapher() {
-    const categoriesByPostId = await wpdb.getCategoriesByPostId()
-
     const tagsByPostId = await wpdb.getTagsByPostId()
     const postRows = await wpdb.query("select * from wp_posts where (post_type='page' or post_type='post') AND post_status != 'trash'")
 
     for (const post of postRows) {
         const tags = tagsByPostId.get(post.ID) || []
-        let tagNames = tags.map(t => decodeHTML(t)).concat([post.post_title])
+        const tagNames = tags.map(t => decodeHTML(t)).concat([post.post_title])
         const matchingTags = await Tag.select('id', 'name', 'isBulkImport').from(
             db.knex().from(Tag.table).whereIn('name', tagNames).andWhere({ isBulkImport: false })
         )
-        let tagIds = matchingTags.map(t => t.id)
+        const tagIds = matchingTags.map(t => t.id)
         if (matchingTags.map(t => t.name).includes(post.post_title)) {
             tagIds.push(1640)
         }
-        await Post.setTags(post.ID, _.uniq(tagIds))
+        await Post.setTags(post.ID, uniq(tagIds))
     }
 }
 
@@ -136,7 +136,7 @@ export async function syncPostToGrapher(postId: number): Promise<string|undefine
         status: wpPost.post_status,
         content: wpPost.post_content,
         published_at: wpPost.post_date_gmt === "0000-00-00 00:00:00" ? null : wpPost.post_date_gmt,
-        updated_at: wpPost.post_modified_gmt === "0000-00-00 00:00:00" ? "1970-01-01 00:00:00" : wpPost.post_modified_gmt    
+        updated_at: wpPost.post_modified_gmt === "0000-00-00 00:00:00" ? "1970-01-01 00:00:00" : wpPost.post_modified_gmt
     } as Post.Row : undefined
 
     await db.knex().transaction(async t => {

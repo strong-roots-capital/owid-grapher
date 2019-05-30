@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra'
 import * as Stripe from 'stripe'
-import { groupBy, sum } from 'lodash'
+import groupBy from 'lodash-es/groupBy'
+import sum from 'lodash-es/sum'
 
 import { STRIPE_SECRET_KEY } from 'settings'
 import { csvRow } from 'utils/server/serverUtil';

@@ -6,8 +6,11 @@ import { SiteHeader } from './SiteHeader'
 import { SiteFooter } from './SiteFooter'
 import { formatAuthors, FormattedPost, FormattingOptions } from '../formatting'
 import { CategoryWithEntries } from 'db/wpdb'
-import * as _ from 'lodash'
 import { SiteSubnavigation } from './SiteSubnavigation'
+
+import flatten from 'lodash-es/flatten'
+import values from 'lodash-es/values'
+import includes from 'lodash-es/includes'
 
 export const LongFormPage = (props: { entries: CategoryWithEntries[], post: FormattedPost, formattingOptions: FormattingOptions }) => {
     const {entries, post, formattingOptions} = props
@@ -17,8 +20,8 @@ export const LongFormPage = (props: { entries: CategoryWithEntries[], post: Form
     const canonicalUrl = `${BAKED_BASE_URL}/${post.slug}`
     const pageDesc = post.excerpt
     const publishedYear = post.modifiedDate.getFullYear()
-    const allEntries = _.flatten(_.values(entries).map(c => c.entries))
-    const isEntry = _.includes(allEntries.map(e => e.slug), post.slug)
+    const allEntries = flatten(values(entries).map(c => c.entries))
+    const isEntry = includes(allEntries.map(e => e.slug), post.slug)
 
     const classes = ["LongFormPage"]
     if (formattingOptions.bodyClassName)

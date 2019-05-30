@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as _ from 'lodash'
+import keyBy from 'lodash-es/keyBy'
 import { groupBy, each, isString, sortBy } from 'charts/Util'
 import { computed, action, observable, autorun, runInAction, IReactionDisposer } from 'mobx'
 import { observer } from 'mobx-react'
@@ -8,6 +8,11 @@ import { DimensionSlot } from 'charts/ChartConfig'
 import { defaultTo } from 'charts/Util'
 import { SelectField, TextField, FieldsRow, Toggle, Modal } from './Forms'
 const fuzzysort = require('fuzzysort')
+
+
+interface Dictionary<T> {
+    [index: string]: T
+}
 
 interface VariableSelectorProps {
     editor: ChartEditor
@@ -62,8 +67,8 @@ export class VariableSelector extends React.Component<VariableSelectorProps> {
         }
     }
 
-    @computed get datasetsByName(): _.Dictionary<Dataset> {
-        return _.keyBy(this.datasets, d => d.name)
+    @computed get datasetsByName(): Dictionary<Dataset> {
+        return keyBy(this.datasets, d => d.name)
     }
 
     @computed get availableVariables(): Variable[] {

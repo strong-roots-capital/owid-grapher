@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as _ from 'lodash'
+import pick from 'lodash-es/pick'
 
 import { webpack } from './webpack'
 import * as settings from 'settings'
@@ -8,7 +8,7 @@ export function AdminSPA(props: { username: string }) {
     const script = `
         window.App = {}
         App.isEditor = true
-        window.admin = new Admin("${props.username}", ${JSON.stringify(_.pick(settings, ["ENV", "GITHUB_USERNAME"]))})
+        window.admin = new Admin("${props.username}", ${JSON.stringify(pick(settings, ["ENV", "GITHUB_USERNAME"]))})
         admin.start(document.querySelector("#app"))
 `
 

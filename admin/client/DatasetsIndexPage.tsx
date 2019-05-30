@@ -1,9 +1,8 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction} from 'mobx'
-const timeago = require('timeago.js')()
 const fuzzysort = require("fuzzysort")
-import * as _ from 'lodash'
+import uniq from 'lodash-es/uniq'
 
 import { AdminLayout } from './AdminLayout'
 import { SearchField, FieldsRow } from './Forms'
@@ -42,14 +41,14 @@ export class DatasetsIndexPage extends React.Component {
                 limit: 50,
                 key: 'term'
             })
-            return _.uniq(results.map((result: any) => result.obj.dataset))
+            return uniq(results.map((result: any) => result.obj.dataset))
         } else {
             return this.datasets.slice(0, maxVisibleRows)
         }
     }
 
     @computed get namespaces() {
-        return _.uniq(this.datasets.map(d => d.namespace))
+        return uniq(this.datasets.map(d => d.namespace))
     }
 
     @computed get numTotalRows(): number {

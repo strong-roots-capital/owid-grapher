@@ -1,7 +1,6 @@
 import * as cheerio from 'cheerio'
 const urlSlug = require('url-slug')
 const wpautop = require('wpautop')
-import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import { HTTPS_ONLY } from 'serverSettings'
@@ -10,7 +9,9 @@ import { getTables, getUploadedImages, FullPost } from 'db/wpdb'
 import Tablepress from './views/Tablepress'
 import {GrapherExports} from './grapherUtil'
 import * as path from 'path'
-import { htmlToPlaintext } from 'utils/string'
+
+import capitalize from 'lodash-es/capitalize'
+import last from 'lodash-es/last'
 
 const mjAPI = require("mathjax-node")
 
@@ -214,7 +215,7 @@ export async function formatWordpressPost(post: FullPost, html: string, formatti
 
         // Add alt tag
         if (upload && !el.attribs['alt']) {
-            el.attribs['alt'] = _.capitalize(upload.slug.replace(/[-_]/g, ' '))
+            el.attribs['alt'] = capitalize(upload.slug.replace(/[-_]/g, ' '))
         }
 
         if (upload && upload.variants.length) {
@@ -379,7 +380,7 @@ export function formatAuthors(authors: string[], requireMax?: boolean): string {
     if (authorsText.length === 0)
         authorsText = authors[0]
     else
-        authorsText += ` and ${_.last(authors)}`
+        authorsText += ` and ${last(authors)}`
 
     return authorsText
 }

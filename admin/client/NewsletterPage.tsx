@@ -3,7 +3,7 @@ import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction} from 'mobx'
 const timeago = require('timeago.js')()
 const fuzzysort = require("fuzzysort")
-import * as _ from 'lodash'
+import uniq from 'lodash-es/uniq'
 
 import { AdminLayout } from './AdminLayout'
 import { SearchField, FieldsRow, EditableTags } from './Forms'
@@ -85,7 +85,7 @@ export class NewsletterPage extends React.Component {
                 limit: 50,
                 key: 'term'
             })
-            return _.uniq(results.map((result: any) => result.obj.post))
+            return uniq(results.map((result: any) => result.obj.post))
         } else {
             return this.posts.slice(0, maxVisibleRows)
         }

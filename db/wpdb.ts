@@ -6,13 +6,11 @@ import * as Knex from 'knex'
 
 import * as path from 'path'
 import * as glob from 'glob'
-import * as _ from 'lodash'
-import * as db from 'db/db'
+import sortBy from 'lodash-es/sortBy'
 import { Post } from 'db/model/Post'
 
 import { promisify } from 'util'
 import * as imageSizeStandard from 'image-size'
-import { Chart } from 'charts/Chart'
 const imageSize = promisify(imageSizeStandard) as any
 class WPDB {
     conn?: DatabaseConnection
@@ -120,7 +118,7 @@ export async function getUploadedImages() {
     }
 
     uploadDex.forEach(upload => {
-        upload.variants = _.sortBy(upload.variants, v => v.width)
+        upload.variants = sortBy(upload.variants, v => v.width)
     })
 
     cachedUploadDex = uploadDex

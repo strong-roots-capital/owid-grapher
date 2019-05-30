@@ -1,10 +1,15 @@
 import * as express from 'express'
 import {Router} from 'express'
-import * as _ from 'lodash'
 import {spawn, ChildProcess} from 'child_process'
 import * as path from 'path'
 import {getConnection} from 'typeorm'
 import * as bodyParser from 'body-parser'
+
+import groupBy from 'lodash-es/groupBy'
+import omit from 'lodash-es/omit'
+import difference from 'lodash-es/difference'
+import keys from 'lodash-es/keys'
+import uniq from 'lodash-es/uniq'
 
 import * as db from 'db/db'
 import * as wpdb from 'db/wpdb'
@@ -25,7 +30,7 @@ import { ChartRevision } from 'db/model/ChartRevision'
 import { Post } from 'db/model/Post'
 import { camelCaseProperties } from 'utils/object'
 import { log } from 'utils/server/log'
-import { denormalizeLatestCountryData } from 'site/server/countryProfiles';
+import { denormalizeLatestCountryData } from 'site/server/countryProfiles'
 import { BAKED_BASE_URL } from 'settings'
 import { PostReference } from 'admin/client/ChartEditor'
 
@@ -643,9 +648,9 @@ api.get('/datasets.json', async req => {
         SELECT dt.datasetId, t.id, t.name FROM dataset_tags dt
         JOIN tags t ON dt.tagId = t.id
     `)
-    const tagsByDatasetId = _.groupBy(tags, t => t.datasetId)
+    const tagsByDatasetId = groupBy(tags, t => t.datasetId)
     for (const dataset of datasets) {
-        dataset.tags = (tagsByDatasetId[dataset.id]||[]).map(t => _.omit(t, 'datasetId'))
+        dataset.tags = (tagsByDatasetId[dataset.id]||[]).map(t => omit(t, 'datasetId'))
     }
     /*LEFT JOIN variables AS v ON v.datasetId=d.id
     GROUP BY d.id*/
@@ -747,7 +752,7 @@ api.put('/datasets/:datasetId', async (req: Request, res: Response) => {
             await t.execute(`INSERT INTO dataset_tags (tagId, datasetId) VALUES ?`, [tagRows])
 
         const source = newDataset.source
-        const description = _.omit(source, ['name', 'id'])
+        const description = omit(source, ['name', 'id'])
         await t.execute(`UPDATE sources SET name=?, description=? WHERE id=?`, [source.name, JSON.stringify(description), source.id])
     })
 
@@ -853,9 +858,9 @@ api.get('/tags/:tagId.json', async (req: Request, res: Response) => {
                 JOIN tags t ON dt.tagId = t.id
                 WHERE dt.datasetId IN (?)
             `, [tag.datasets.map((d: any) => d.id)])
-            const tagsByDatasetId = _.groupBy(datasetTags, t => t.datasetId)
+            const tagsByDatasetId = groupBy(datasetTags, t => t.datasetId)
             for (const dataset of tag.datasets) {
-                dataset.tags = tagsByDatasetId[dataset.id].map(t => _.omit(t, 'datasetId'))
+                dataset.tags = tagsByDatasetId[dataset.id].map(t => omit(t, 'datasetId'))
             }
         }
     }
@@ -1128,14 +1133,14 @@ api.post('/importDataset', async (req: Request, res: Response) => {
         }
 
         // Insert any new entities into the db
-        const entitiesUniq = _.uniq(entities)
+        const entitiesUniq = uniq(entities)
         const importEntityRows = entitiesUniq.map(e => [e, false, now, now, ""])
         await t.execute(`INSERT IGNORE entities (name, validated, createdAt, updatedAt, displayName) VALUES ?`, [importEntityRows])
 
         // Map entities to entityIds
         const entityRows = await t.query(`SELECT id, name FROM entities WHERE name IN (?)`, [entitiesUniq])
         const entityIdLookup: {[key: string]: number} = {}
-        console.log(_.difference(_.keys(entityIdLookup), entitiesUniq))
+        console.log(difference(keys(entityIdLookup), entitiesUniq))
         for (const row of entityRows) {
             entityIdLookup[row.name] = row.id
         }

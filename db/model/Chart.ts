@@ -1,11 +1,13 @@
 import {Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, JoinColumn} from "typeorm"
-import * as _ from 'lodash'
 import * as db from 'db/db'
 import { ChartConfig, ChartConfigProps } from 'charts/ChartConfig'
 import {getVariableData} from './Variable'
 import { User } from './User'
 import { ChartRevision } from './ChartRevision'
-import { PUBLIC_TAG_PARENT_IDS } from "settings";
+import { PUBLIC_TAG_PARENT_IDS } from "settings"
+
+import keyBy from 'lodash-es/keyBy'
+import uniq from 'lodash-es/uniq'
 
 @Entity("charts")
 export class Chart extends BaseEntity {
@@ -53,7 +55,7 @@ export class Chart extends BaseEntity {
             await t.execute(`DELETE FROM chart_tags WHERE chartId=?`, [chartId])
             if (tagRows.length)
                 await t.execute(`INSERT INTO chart_tags (tagId, chartId) VALUES ?`, [tagRows])
-        
+
             const tags = tagIds.length ? await t.query("select parentId from tags where id in (?)", [tagIds]) as { parentId: number }[] : []
             const isIndexable = tags.some(t => PUBLIC_TAG_PARENT_IDS.includes(t.parentId))
 
@@ -72,13 +74,13 @@ export class Chart extends BaseEntity {
             chart.tags = []
         }
 
-        const chartsById = _.keyBy(charts, c => c.id)
+        const chartsById = keyBy(charts, c => c.id)
 
         for (const ct of chartTags) {
             const chart = chartsById[ct.chartId]
             if (chart)
                 chart.tags.push({ id: ct.tagId, name: ct.tagName })
-        }        
+        }
     }
 
     static async all(): Promise<ChartRow[]> {
@@ -136,7 +138,7 @@ export class OldChart {
     }
 
     async getVariableData(): Promise<any> {
-        const variableIds = _.uniq(this.config.dimensions.map(d => d.variableId))
+        const variableIds = uniq(this.config.dimensions.map(d => d.variableId))
         return getVariableData(variableIds)
     }
 }

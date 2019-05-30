@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx'
-import * as _ from 'lodash'
+import keyBy from 'lodash-es/keyBy'
 import * as fs from 'fs-extra'
 
 import { parseCSV, CSVStreamParser } from 'utils/csv'
@@ -31,7 +31,7 @@ async function importCodebook() {
     }))
 
     // Need to handle these fussy subset codes separately
-    const variablesByCode = _.keyBy(vdemVariables.filter(v => v.shortDefinition), v => v.indicatorCode)
+    const variablesByCode = keyBy(vdemVariables.filter(v => v.shortDefinition), v => v.indicatorCode)
     for (const v of vdemVariables) {
         const orig = variablesByCode[v.indicatorCode]
         if (orig !== v) {

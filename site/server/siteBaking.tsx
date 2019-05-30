@@ -13,26 +13,21 @@ import * as ReactDOMServer from 'react-dom/server'
 import * as url from 'url'
 import * as path from 'path'
 import * as glob from 'glob'
-import * as _ from 'lodash'
 import * as fs from 'fs-extra'
 import { WORDPRESS_DIR } from 'serverSettings'
 import { formatPost, extractFormattingOptions, FormattedPost } from './formatting'
 import { bakeGrapherUrls, getGrapherExportsByUrl } from "./grapherUtil"
 import * as cheerio from 'cheerio'
-import { JsonError, slugify } from "utils/server/serverUtil"
-import { Chart } from 'db/model/Chart'
+import { JsonError } from "utils/server/serverUtil"
 import { Post } from "db/model/Post"
-import { BAKED_BASE_URL, BAKED_GRAPHER_URL } from "settings"
-import moment = require("moment")
-import * as urljoin from 'url-join'
+import { BAKED_BASE_URL } from "settings"
 import { EntriesByYearPage, EntriesForYearPage } from "./views/EntriesByYearPage"
-import { VariableCountryPage } from "./views/VariableCountryPage";
-import { CountryProfilePage, CountryProfileKeyStats, CountryProfileIndicator } from "./views/CountryProfilePage";
-import { ChartConfigProps } from "charts/ChartConfig";
-import { DimensionWithData } from "charts/DimensionWithData";
-import { Variable } from "db/model/Variable";
-import { CountriesIndexPage } from "./views/CountriesIndexPage";
-import { FeedbackPage } from "./views/FeedbackPage";
+import { VariableCountryPage } from "./views/VariableCountryPage"
+import { FeedbackPage } from "./views/FeedbackPage"
+
+import keyBy from 'lodash-es/keyBy'
+import sortBy from 'lodash-es/sortBy'
+
 
 // Wrap ReactDOMServer to stick the doctype on
 export function renderToHtmlPage(element: any) {
@@ -54,7 +49,7 @@ export async function renderChartsPage() {
         c.tags = []
     }
 
-    const chartsById = _.keyBy(chartItems, c => c.id)
+    const chartsById = keyBy(chartItems, c => c.id)
 
     for (const ct of chartTags) {
         const c = chartsById[ct.chartId]
@@ -144,7 +139,7 @@ export async function renderBlogByPageNum(pageNum: number) {
             try {
                 const pathname = url.parse(post.imageUrl).pathname as string
                 const paths = glob.sync(path.join(WORDPRESS_DIR, pathname.replace(/\.png/, "*.png")))
-                const sortedPaths = _.sortBy(paths, p => fs.statSync(p).size)
+                const sortedPaths = sortBy(paths, p => fs.statSync(p).size)
                 post.imageUrl = sortedPaths[sortedPaths.length-3].replace(WORDPRESS_DIR, '')
             } catch (err) {
                 // Just use the big one

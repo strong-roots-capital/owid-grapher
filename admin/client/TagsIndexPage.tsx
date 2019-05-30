@@ -1,10 +1,14 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
 import {observable, computed, action, runInAction} from 'mobx'
-import * as _ from 'lodash'
 import { Redirect } from 'react-router-dom'
 
-import { Admin } from './Admin'
+import keyBy from 'lodash-es/keyBy'
+
+interface Dictionary<T> {
+    [index: string]: T
+}
+
 import { AdminLayout } from './AdminLayout'
 import { FieldsRow, Modal, TextField } from './Forms'
 import { TagBadge, Tag } from './TagBadge'
@@ -72,8 +76,8 @@ export class TagsIndexPage extends React.Component {
     @observable isAddingTag: boolean = false
     @observable addTagParentId?: number
 
-    @computed get categoriesById(): _.Dictionary<TagListItem> {
-        return _.keyBy(this.tags, t => t.id)
+    @computed get categoriesById(): Dictionary<TagListItem> {
+        return keyBy(this.tags, t => t.id)
     }
 
     @computed get parentCategories(): { id: number, name: string, specialType?: string, children: TagListItem[] }[] {

@@ -1,9 +1,7 @@
 import * as React from 'react'
 import {observer} from 'mobx-react'
-import {observable, computed, action, runInAction} from 'mobx'
-import * as _ from 'lodash'
+import {observable, action, runInAction} from 'mobx'
 
-import { Admin } from './Admin'
 import { AdminLayout } from './AdminLayout'
 import { FieldsRow } from './Forms'
 import { Link } from './Link'

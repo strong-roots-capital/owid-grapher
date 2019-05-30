@@ -1,8 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn} from "typeorm"
-import * as _ from 'lodash'
+import extend from 'lodash-es/extend'
 
 import * as db from 'db/db'
-import { Dataset } from './Dataset'
 import { VariableDisplaySettings } from "charts/VariableData"
 
 export namespace Variable {
@@ -14,7 +12,7 @@ export namespace Variable {
         columnOrder: number
         display: VariableDisplaySettings
     }
-    
+
     export type Field = keyof Row
 
     export const table = "variables"
@@ -60,7 +58,7 @@ export async function getVariableData(variableIds: number[]): Promise<any> {
             retrievedData: sourceDescription.retrievedData || "",
             additionalInfo: sourceDescription.additionalInfo || ""
         }
-        data.variables[row.id] = _.extend({
+        data.variables[row.id] = extend({
             years: [],
             entities: [],
             values: []

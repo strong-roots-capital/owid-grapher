@@ -5,10 +5,13 @@
  */
 
 import * as React from 'react'
-import * as _ from 'lodash'
 import { bind } from 'decko'
 import {observable, action} from 'mobx'
 import {observer} from 'mobx-react'
+
+import range from 'lodash-es/range'
+import clone from 'lodash-es/clone'
+import uniqBy from 'lodash-es/uniqBy'
 
 import { extend, pick, capitalize } from 'charts/Util'
 import { Colorpicker } from './Colorpicker'
@@ -512,7 +515,7 @@ export class Pagination extends React.Component<{ totalItems: number, perPage: n
         return <nav>
             <ul className="pagination">
                 <li className="page-item"><a className="page-link">Previous</a></li>
-                {_.range(1, numPages+1).map(pageNum =>
+                {range(1, numPages+1).map(pageNum =>
                     <li className="page-item"><a className="page-link">{pageNum}</a></li>
                 )}
                 <li className="page-item"><a className="page-link">Next</a></li>
@@ -572,11 +575,11 @@ export class EditableTags extends React.Component<{ tags: Tag[], suggestions: Ta
     @observable isEditing: boolean = false
     base: React.RefObject<HTMLDivElement> = React.createRef()
 
-    @observable tags: Tag[] = _.clone(this.props.tags)
+    @observable tags: Tag[] = clone(this.props.tags)
 
     @action.bound onAddTag(tag: Tag) {
         this.tags.push(tag)
-        this.tags = _.uniqBy(this.tags, t => t.id).filter(t => t.name !== 'Uncategorized')
+        this.tags = uniqBy(this.tags, t => t.id).filter(t => t.name !== 'Uncategorized')
 
         this.ensureUncategorized()
     }

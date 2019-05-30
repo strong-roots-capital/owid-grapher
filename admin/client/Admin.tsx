@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import * as _ from 'lodash'
+import isEmpty from 'lodash-es/isEmpty'
 import {observable, computed} from 'mobx'
 import * as urljoin from 'url-join'
 
@@ -71,7 +71,7 @@ export class Admin {
 
         let targetPath = path
         // Tack params on the end if it's a GET request
-        if (method === "GET" && !_.isEmpty(data)) {
+        if (method === "GET" && !isEmpty(data)) {
             targetPath += queryParamsToStr(data as Json)
         }
 

@@ -1,11 +1,11 @@
-import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
 import * as db from 'db/db'
-import * as parseArgs from 'minimist'
-const argv = parseArgs(process.argv.slice(2))
 import { getVariableData } from 'db/model/Variable'
 import * as fs from 'fs-extra'
 const md5 = require('md5')
+
+import last from 'lodash-es/last'
+import uniq from 'lodash-es/uniq'
 
 declare var global: any
 global.window = { location: { search: "" }}
@@ -40,7 +40,7 @@ export async function bakeChartsToImages(chartUrls: string[], outDir: string) {
 
     for (const urlStr of chartUrls) {
         const url = parseUrl(urlStr)
-        const slug = _.last(url.pathname.split('/')) as string
+        const slug = last(url.pathname.split('/')) as string
         const jsonConfig = chartsBySlug.get(slug)
         if (jsonConfig) {
             const queryStr = url.query as any
@@ -52,7 +52,7 @@ export async function bakeChartsToImages(chartUrls: string[], outDir: string) {
             console.log(outPath)
 
             if (!fs.existsSync(outPath)) {
-                const variableIds = _.uniq(chart.dimensions.map(d => d.variableId))
+                const variableIds = uniq(chart.dimensions.map(d => d.variableId))
                 const vardata = await getVariableData(variableIds)
                 chart.vardata.receiveData(vardata)
                 fs.writeFile(outPath, chart.staticSVG)

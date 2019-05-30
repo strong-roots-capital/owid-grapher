@@ -3,9 +3,10 @@ import * as React from 'react'
 import { Head } from './Head'
 import { SiteHeader } from './SiteHeader'
 import { SiteFooter } from './SiteFooter'
-import { CategoryWithEntries } from 'db/wpdb'
-import * as _ from 'lodash'
-import { createVerify } from 'crypto';
+
+import sortBy from 'lodash-es/sortBy'
+import uniqBy from 'lodash-es/uniqBy'
+import flatten from 'lodash-es/flatten'
 
 export interface ChartIndexItem {
     id: number
@@ -24,7 +25,7 @@ export interface TagWithCharts {
 export const ChartsIndexPage = (props: { chartItems: ChartIndexItem[] }) => {
     const { chartItems } = props
 
-    const allTags = _.sortBy(_.uniqBy(_.flatten(chartItems.map(c => c.tags)), t => t.id), t => t.name) as TagWithCharts[]
+    const allTags = sortBy(uniqBy(flatten(chartItems.map(c => c.tags)), t => t.id), t => t.name) as TagWithCharts[]
 
     for (const c of chartItems) {
         for (const tag of allTags) {
@@ -38,7 +39,7 @@ export const ChartsIndexPage = (props: { chartItems: ChartIndexItem[] }) => {
 
     // Sort the charts in each tag
     for (const tag of allTags) {
-        tag.charts = _.sortBy(tag.charts, c => c.title.trim())
+        tag.charts = sortBy(tag.charts, c => c.title.trim())
     }
 
     return <html>
