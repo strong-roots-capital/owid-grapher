@@ -3,6 +3,7 @@ const slugify = require('slugify')
 import { DatabaseConnection } from 'db/DatabaseConnection'
 import {WORDPRESS_DB_NAME, WORDPRESS_DIR, DB_HOST, DB_USER, DB_PASS} from 'serverSettings'
 import * as Knex from 'knex'
+import * as cheerio from 'cheerio'
 
 import * as path from 'path'
 import * as glob from 'glob'
@@ -315,7 +316,57 @@ export interface FullPost {
     imageUrl?: string
 }
 
-export async function getFullPost(row: any): Promise<FullPost> {
+function shiftHeadings(html: string, levels: number): string {
+    const $ = cheerio.load(html)
+    $('h1, h2, h3, h4, h5').each((i, el) => {
+        const currentLevel = parseInt(el.tagName[1], 10)
+        const newLevel = Math.min(6, currentLevel + levels)
+        el.tagName = `h${newLevel}`
+    })
+    return $.html()
+}
+
+async function injectPosts(html: string, parents: number[]): Promise<string> {
+    const $ = cheerio.load(html)
+    const $postInjections = $.root().find('post')
+    const postIds: number[] = Array.from($postInjections).map((el) => {
+        const attr = $(el).attr('id')
+        return parseInt(attr, 10)
+    })
+    const postsById: { [id: number]: FullPost } = {}
+    if (postIds.length) {
+        const rows = await wpdb.query(`SELECT * FROM wp_posts WHERE ID IN (?)`, [postIds]) as { ID: number, post_content: string }[]
+        for (const row of rows) {
+            if (!parents.includes(row.ID)) {
+                postsById[row.ID] = await getFullPost(row, parents)
+            }
+        }
+        // find all <post> tags, for each:
+        // - inject the title as h3
+        // - rewrite each heading level + 2
+        $postInjections.each((i, el) => {
+            const $el = $(el)
+            const id = parseInt($el.attr('id'), 10)
+            const post = postsById[id]
+            if (post) {
+                const title = $el.attr('title') || post.title
+                // If there is a case like
+                //   <p>test</p>followed by a text node
+                // replacing <p> will actually replace the adjacent text nodes too.
+                // This is why we prepend inside the element, then we replace itself
+                // with its innerHTML. This will preserve the adjacent text nodes.
+                $el.prepend(shiftHeadings(post.content, 1))
+                $el.prepend(`<h3>${title}</h3>`)
+            }
+            $el.replaceWith($el.html() || "")
+        })
+        return $.html()
+    } else {
+        return html
+    }
+}
+
+export async function getFullPost(row: any, parents: number[] = []): Promise<FullPost> {
     const authorship = await getAuthorship()
     const permalinks = await getPermalinks()
     const featuredImageUrl = await getFeaturedImageUrl(row.ID)
@@ -330,7 +381,7 @@ export async function getFullPost(row: any): Promise<FullPost> {
         date: new Date(row.post_date_gmt),
         modifiedDate: new Date(row.post_modified_gmt),
         authors: authorship.get(postId) || [],
-        content: row.post_content,
+        content: await injectPosts(row.post_content, [...parents, row.ID]),
         excerpt: row.post_excerpt,
         imageUrl: featuredImageUrl
     }
