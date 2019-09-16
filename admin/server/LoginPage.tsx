@@ -24,6 +24,7 @@ export function LoginPage(props: { next?: string, errorMessage?: string }) {
         <head>
             <title>owid-admin</title>
             <meta name="description" content=""/>
+            <meta name='robots' content='noindex'/>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"/>
             <style>{style}</style>
         </head>
