@@ -111,6 +111,7 @@ export {
 
 import { format } from "d3-format"
 import { extent } from "d3-array"
+import * as striptags from "striptags"
 
 import { Vector2 } from "./Vector2"
 import { TickFormattingOptions } from "./TickFormattingOptions"
@@ -449,4 +450,8 @@ export async function fetchJSON(url: string): Promise<any> {
     // const response = await window.fetch(url)
     // const result = await response.json()
     // return result
+}
+
+export function stripHTML(html: string): string {
+    return striptags(html)
 }
